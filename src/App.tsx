@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PageLayOut />}>
           <Route index element={<HomePage />} />
-          <Route path="cart" element={<AddToCartPage />} />
+          <Route path="/cart" element={<AddToCartPage />} />
         </Route>
       </Routes>
     </Router>

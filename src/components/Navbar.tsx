@@ -1,19 +1,24 @@
+import { useState } from "react";
 import type { NavItem } from "../type/type";
 import { Link } from "react-router-dom";
-import { PawPrint } from "lucide-react";
-import { ShoppingCart } from "lucide-react";
-import { CircleUserRound } from "lucide-react";
+import { PawPrint, ShoppingCart, CircleUserRound, Menu, X } from "lucide-react";
 
 export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="sticky w-full flex justify-center top-0 z-1">
-      <div className="w-full flex flex-row justify-between items-center p-2 shadow-2xl">
-        <div className="flex flex-row items-center p-2 gap-2">
-          <PawPrint size={50} className="text-[#0c381b]" />
-          <span className="text-[#0c381b] text-3xl">Happy Paws</span>
+    <div className="sticky top-0 z-50 w-full bg-white shadow-2xl">
+      <div className="w-full flex justify-between items-center p-3">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <PawPrint size={45} className="text-[#0c381b]" />
+          <span className="text-[#0c381b] text-2xl font-semibold">
+            Happy Paws
+          </span>
         </div>
 
-        <nav className="flex flex-row items-center justify-center gap-4">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link, key) => (
             <Link
               to={link.link}
@@ -24,16 +29,65 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center justify-center gap-10">
-          <div className="flex items-center justify-center relative">
-            <ShoppingCart size={30} />
-            <p className="absolute -top-1 -right-1 text-xs border rounded-full px-1 bg-[#6F9B75] text-white">
+
+        {/* Right Icons (Desktop only) */}
+        <div className="hidden md:flex items-center gap-6">
+          {/* Cart */}
+          <Link to="/cart" className="relative">
+            <ShoppingCart size={28} />
+            <p className="absolute -top-1 -right-2 text-xs border rounded-full px-1 bg-[#6F9B75] text-white">
               1
             </p>
-          </div>
-          <CircleUserRound size={30} />
+          </Link>
+
+          {/* Login */}
+          <Link to="/login">
+            <CircleUserRound size={28} />
+          </Link>
         </div>
+
+        {/* Burger Menu (Mobile only) */}
+        <button className="md:hidden" onClick={() => setOpen(!open)}>
+          {open ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {open && (
+        <div className="md:hidden flex flex-col items-center gap-4 py-5 border-t bg-white">
+          {/* Nav Links */}
+          {navLinks.map((link, key) => (
+            <Link
+              to={link.link}
+              key={key}
+              onClick={() => setOpen(false)}
+              className="text-lg hover:text-[#7CA982]"
+            >
+              {link.title}
+            </Link>
+          ))}
+
+          {/* Cart (Mobile) */}
+          <Link
+            to="/cart"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 text-lg"
+          >
+            <ShoppingCart size={20} />
+            <span>Cart</span>
+          </Link>
+
+          {/* Login (Mobile) */}
+          <Link
+            to="/login"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 text-lg"
+          >
+            <CircleUserRound size={20} />
+            <span>Login</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
