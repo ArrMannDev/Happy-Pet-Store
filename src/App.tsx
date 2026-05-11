@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PageLayOut from "./pages/PageLayOut";
 import AddToCartPage from "./pages/AddToCartPage";
 import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="/cart" element={<AddToCartPage />} />
         </Route>
+
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Router>
   );

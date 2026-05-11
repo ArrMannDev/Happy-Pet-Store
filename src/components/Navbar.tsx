@@ -8,7 +8,7 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white shadow-2xl">
-      <div className="w-full flex justify-between items-center p-3">
+      <div className="w-full flex justify-between items-center p-5">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <PawPrint size={45} className="text-[#0c381b]" />
