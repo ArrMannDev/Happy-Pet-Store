@@ -11,7 +11,7 @@ export default function LoginPage() {
     Record<string, string[] | undefined>
   >({});
 
-  const { signInUser, signUpUser } = useAuth();
+  const { signInUser, signUpUser, signInWithGoogle } = useAuth();
 
   const [loginData, setLoginData] = useState<LoginData>({
     email: "",
@@ -53,14 +53,6 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (isSignUp) {
-      // const zodResult = SignUpSchema.safeParse(signUpData);
-      // if (!zodResult.success) {
-      //   setZodError(zodResult.error.flatten().fieldErrors);
-      //   return;
-      // }
-
-      // setZodError({});
-
       const result = await signUpUser(
         signUpData.email,
         signUpData.password,
@@ -267,6 +259,7 @@ export default function LoginPage() {
 
             <button
               type="button"
+              onClick={signInWithGoogle}
               className="w-full border border-gray-300 py-3 mt-6 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-50 transition cursor-pointer"
             >
               <span className="text-lg font-bold">G</span>

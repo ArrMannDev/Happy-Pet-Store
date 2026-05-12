@@ -70,6 +70,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+
+    if (error) {
+      console.error("Google login error:", error.message);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true, data };
+  };
   const getInitialSession = async () => {
     try {
       const { data, error } = await supabase.auth.getSession();
@@ -120,7 +135,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ session, signInUser, signUpUser, userProfiles }}
+      value={{
+        session,
+        signInUser,
+        signUpUser,
+        userProfiles,
+        signInWithGoogle,
+      }}
     >
       {children}
     </AuthContext.Provider>
