@@ -1,7 +1,7 @@
 import { useState } from "react";
 import loginImage from "../assets/img/LoginBanner.png";
 import type { LoginData, SignUpData } from "../type/type";
-import { LoginSchema, SignUpSchema } from "../schemas/auth.schema";
+import { LoginSchema } from "../schemas/auth.schema";
 import { useAuth } from "../Context/AuthContext";
 
 export default function LoginPage() {
