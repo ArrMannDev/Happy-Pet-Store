@@ -1,13 +1,111 @@
 import { useState } from "react";
 import loginImage from "../assets/img/LoginBanner.png";
+import type { LoginData, SignUpData } from "../type/type";
+import { LoginSchema, SignUpSchema } from "../schemas/auth.schema";
+import { useAuth } from "../Context/AuthContext";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const [zodError, setZodError] = useState<
+    Record<string, string[] | undefined>
+  >({});
+
+  const { signInUser, signUpUser } = useAuth();
+
+  const [loginData, setLoginData] = useState<LoginData>({
+    email: "",
+    password: "",
+  });
+
+  const [signUpData, setSignUpData] = useState<SignUpData>({
+    email: "",
+    password: "",
+    full_name: "",
+    phone: "",
+    address: "",
+    account_type: "user",
+  });
+
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setLoginData({
+      ...loginData,
+      [name]: value,
+    });
+
+    setZodError({});
+  };
+
+  const handleSignUpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setSignUpData({
+      ...signUpData,
+      [name]: value,
+    });
+
+    setZodError({});
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isSignUp) {
+      // const zodResult = SignUpSchema.safeParse(signUpData);
+      // if (!zodResult.success) {
+      //   setZodError(zodResult.error.flatten().fieldErrors);
+      //   return;
+      // }
+
+      // setZodError({});
+
+      const result = await signUpUser(
+        signUpData.email,
+        signUpData.password,
+        signUpData.full_name,
+        signUpData.phone,
+        signUpData.address,
+        signUpData.account_type,
+      );
+
+      alert(result?.message);
+
+      if (!result?.success) return;
+
+      setSignUpData({
+        email: "",
+        password: "",
+        full_name: "",
+        phone: "",
+        address: "",
+        account_type: "user",
+      });
+    } else {
+      const zodResult = LoginSchema.safeParse(loginData);
+
+      if (!zodResult.success) {
+        setZodError(zodResult.error.flatten().fieldErrors);
+        return;
+      }
+
+      setZodError({});
+
+      const result = await signInUser(loginData.email, loginData.password);
+
+      console.log("Result After Log In", result);
+
+      setLoginData({
+        email: "",
+        password: "",
+      });
+    }
+  };
+
   return (
     <div className="w-full min-h-screen flex justify-center items-center p-5 bg-gray-100">
       <div className="w-full md:w-[90%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-row">
-        {/* Left Image */}
         <div className="hidden md:flex w-[40%]">
           <img
             src={loginImage}
@@ -16,10 +114,8 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Right Form */}
         <div className="w-full md:w-[60%] flex items-center justify-center p-10">
           <div className="w-full md:w-[70%]">
-            {/* Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold mb-2">
                 {isSignUp ? "Create Account" : "Welcome Back"}
@@ -32,9 +128,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Form */}
-            <form className="space-y-4">
-              {/* Full Name */}
+            <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUp && (
                 <div>
                   <label className="block mb-1 text-sm font-medium">
@@ -43,24 +137,40 @@ export default function LoginPage() {
 
                   <input
                     type="text"
+                    name="full_name"
+                    value={signUpData.full_name}
                     placeholder="Enter your full name"
+                    onChange={handleSignUpChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
                   />
+
+                  {zodError.full_name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {zodError.full_name[0]}
+                    </p>
+                  )}
                 </div>
               )}
 
-              {/* Email */}
               <div>
                 <label className="block mb-1 text-sm font-medium">Email</label>
 
                 <input
                   type="email"
+                  name="email"
+                  value={isSignUp ? signUpData.email : loginData.email}
                   placeholder="Enter your email"
+                  onChange={isSignUp ? handleSignUpChange : handleLoginChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
                 />
+
+                {zodError.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {zodError.email[0]}
+                  </p>
+                )}
               </div>
 
-              {/* Phone */}
               {isSignUp && (
                 <div>
                   <label className="block mb-1 text-sm font-medium">
@@ -69,13 +179,21 @@ export default function LoginPage() {
 
                   <input
                     type="text"
+                    name="phone"
+                    value={signUpData.phone}
                     placeholder="Enter your phone number"
+                    onChange={handleSignUpChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
                   />
+
+                  {zodError.phone && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {zodError.phone[0]}
+                    </p>
+                  )}
                 </div>
               )}
 
-              {/* Address */}
               {isSignUp && (
                 <div>
                   <label className="block mb-1 text-sm font-medium">
@@ -84,13 +202,21 @@ export default function LoginPage() {
 
                   <input
                     type="text"
+                    name="address"
+                    value={signUpData.address}
                     placeholder="Enter your address"
+                    onChange={handleSignUpChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
                   />
+
+                  {zodError.address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {zodError.address[0]}
+                    </p>
+                  )}
                 </div>
               )}
 
-              {/* Password */}
               <div>
                 <label className="block mb-1 text-sm font-medium">
                   Password
@@ -98,12 +224,20 @@ export default function LoginPage() {
 
                 <input
                   type="password"
+                  name="password"
+                  value={isSignUp ? signUpData.password : loginData.password}
                   placeholder="Enter your password"
+                  onChange={isSignUp ? handleSignUpChange : handleLoginChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
                 />
+
+                {zodError.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {zodError.password[0]}
+                  </p>
+                )}
               </div>
 
-              {/* Button */}
               <button
                 type="submit"
                 className="w-full bg-[var(--color-bg)] text-white py-3 rounded-lg hover:bg-[#0C381B] transition"
@@ -112,7 +246,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Toggle */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
                 {isSignUp
@@ -120,7 +253,11 @@ export default function LoginPage() {
                   : "Don't have an account?"}
 
                 <button
-                  onClick={() => setIsSignUp(!isSignUp)}
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setZodError({});
+                  }}
                   className="ml-2 text-black font-semibold"
                 >
                   {isSignUp ? "Login" : "Sign Up"}

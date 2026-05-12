@@ -26,28 +26,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUpUser = async (
     email: string,
     password: string,
-    name: string,
-    accountType: string,
+    full_name: string,
+    phone: string,
+    address: string,
+    account_type: string,
   ) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        //add meta user data in user tabel of supabase
         options: {
           data: {
-            name,
-            account_type: accountType,
+            full_name,
+            phone,
+            address,
+            account_type,
           },
         },
       });
+
       if (error) {
         throw error;
       }
-      setSession(data.session);
-      return { success: true, data };
-    } catch (error) {
+
+      if (data.session) {
+        setSession(data.session);
+      }
+
+      return {
+        success: true,
+        data,
+        message: data.session
+          ? "Sign up successful"
+          : "Sign up successful. Please check your email to confirm your account.",
+      };
+    } catch (error: any) {
       console.error("Error signing up:", error.message);
+
+      return {
+        success: false,
+        message: error.message,
+      };
     }
   };
 
@@ -66,9 +85,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getAllUserProfiles = async () => {
     try {
-      const { data, error } = await supabase.from("user_profiles").select(
+      const { data, error } = await supabase.from("profiles").select(
         `id,
-        name,
+        full_name,
+        phone,
+        address,
         account_type
         `,
       );
@@ -77,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       }
       setUserProfiles(data);
-      console.log("Users Data", data);
+      console.log("Users Data", userProfiles);
     } catch (error) {
       console.error("Error Getting fetching the user profiles", error.message);
     }

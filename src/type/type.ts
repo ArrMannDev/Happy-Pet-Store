@@ -3,10 +3,14 @@ export type NavItem = {
     link:string
 }
 
-export type LoginData = {
+export interface LoginData {
     email:string,
     password:string,
+}
+
+export interface SignUpData extends LoginData{
     full_name:string,
     phone:string,
     address:string,
+    account_type:string
 }
