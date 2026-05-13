@@ -1,12 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import loginImage from "../assets/img/LoginBanner.png";
 import type { LoginData, SignUpData } from "../type/type";
 import { LoginSchema } from "../schemas/auth.schema";
+import { EyeClosed, Eye } from "lucide-react";
 import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
-
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [zodError, setZodError] = useState<
     Record<string, string[] | undefined>
   >({});
@@ -74,6 +77,8 @@ export default function LoginPage() {
         address: "",
         account_type: "user",
       });
+      navigate("/login");
+      setIsSignUp(false);
     } else {
       const zodResult = LoginSchema.safeParse(loginData);
 
@@ -92,7 +97,12 @@ export default function LoginPage() {
         email: "",
         password: "",
       });
+      navigate("/");
     }
+  };
+
+  const toggleDisplayPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -214,20 +224,33 @@ export default function LoginPage() {
                   Password
                 </label>
 
-                <input
-                  type="password"
-                  name="password"
-                  value={isSignUp ? signUpData.password : loginData.password}
-                  placeholder="Enter your password"
-                  onChange={isSignUp ? handleSignUpChange : handleLoginChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={isSignUp ? signUpData.password : loginData.password}
+                    placeholder="Enter your password"
+                    onChange={isSignUp ? handleSignUpChange : handleLoginChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+                  />
+                  {showPassword ? (
+                    <Eye
+                      className="absolute top-3 right-7 hover:cursor-pointer"
+                      onClick={toggleDisplayPassword}
+                    />
+                  ) : (
+                    <EyeClosed
+                      className="absolute top-3 right-7 hover:cursor-pointer"
+                      onClick={toggleDisplayPassword}
+                    />
+                  )}
 
-                {zodError.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {zodError.password[0]}
-                  </p>
-                )}
+                  {zodError.password && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {zodError.password[0]}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <button

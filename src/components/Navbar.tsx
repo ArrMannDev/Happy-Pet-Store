@@ -2,9 +2,15 @@ import { useState } from "react";
 import type { NavItem } from "../type/type";
 import { Link } from "react-router-dom";
 import { PawPrint, ShoppingCart, CircleUserRound, Menu, X } from "lucide-react";
+import { useAuth } from "../Context/AuthContext";
 
 export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
   const [open, setOpen] = useState(false);
+  const { session } = useAuth();
+
+  const profileImage =
+    session?.user?.user_metadata?.avatar_url ||
+    session?.user?.user_metadata?.picture;
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white shadow-2xl">
@@ -30,9 +36,8 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
           ))}
         </nav>
 
-        {/* Right Icons (Desktop only) */}
+        {/* Right Icons Desktop */}
         <div className="hidden md:flex items-center gap-6">
-          {/* Cart */}
           <Link to="/cart" className="relative">
             <ShoppingCart size={28} />
             <p className="absolute -top-1 -right-2 text-xs border rounded-full px-1 bg-[#6F9B75] text-white">
@@ -40,13 +45,21 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
             </p>
           </Link>
 
-          {/* Login */}
           <Link to="/login">
-            <CircleUserRound size={28} />
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                referrerPolicy="no-referrer"
+                className="w-10 h-10 rounded-full object-cover border border-gray-300"
+              />
+            ) : (
+              <CircleUserRound size={28} />
+            )}
           </Link>
         </div>
 
-        {/* Burger Menu (Mobile only) */}
+        {/* Burger Menu Mobile */}
         <button className="md:hidden" onClick={() => setOpen(!open)}>
           {open ? <X size={28} /> : <Menu size={28} />}
         </button>
@@ -55,7 +68,6 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden flex flex-col items-center gap-4 py-5 border-t bg-white">
-          {/* Nav Links */}
           {navLinks.map((link, key) => (
             <Link
               to={link.link}
@@ -67,24 +79,22 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
             </Link>
           ))}
 
-          {/* Cart (Mobile) */}
-          <Link
-            to="/cart"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 text-lg"
-          >
+          <Link to="/cart" className="flex items-center gap-2 text-lg">
             <ShoppingCart size={20} />
             <span>Cart</span>
           </Link>
 
-          {/* Login (Mobile) */}
-          <Link
-            to="/login"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 text-lg"
-          >
-            <CircleUserRound size={20} />
-            <span>Login</span>
+          <Link to="/login">
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                referrerPolicy="no-referrer"
+                className="w-10 h-10 rounded-full object-cover border border-gray-300"
+              />
+            ) : (
+              <CircleUserRound size={28} />
+            )}
           </Link>
         </div>
       )}
