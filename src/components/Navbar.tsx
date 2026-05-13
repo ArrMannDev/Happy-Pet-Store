@@ -1,8 +1,16 @@
 import { useState } from "react";
 import type { NavItem } from "../type/type";
 import { Link } from "react-router-dom";
-import { PawPrint, ShoppingCart, CircleUserRound, Menu, X } from "lucide-react";
+import {
+  PawPrint,
+  ShoppingCart,
+  CircleUserRound,
+  Menu,
+  X,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "../Context/AuthContext";
+import { supabase } from "../superbase-client";
 
 export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
   const [open, setOpen] = useState(false);
@@ -11,6 +19,11 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
   const profileImage =
     session?.user?.user_metadata?.avatar_url ||
     session?.user?.user_metadata?.picture;
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setOpen(false);
+  };
 
   return (
     <div className="sticky top-0 z-50 w-full bg-white shadow-2xl">
@@ -45,18 +58,24 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
             </p>
           </Link>
 
-          <Link to="/login">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                referrerPolicy="no-referrer"
-                className="w-10 h-10 rounded-full object-cover border border-gray-300"
-              />
-            ) : (
+          {session ? (
+            <div className="flex items-center gap-3">
+              {profileImage && (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  referrerPolicy="no-referrer"
+                  className="w-10 h-10 rounded-full object-cover border border-gray-300"
+                />
+              )}
+
+              <LogOut size={28} onClick={handleLogout} />
+            </div>
+          ) : (
+            <Link to="/login">
               <CircleUserRound size={28} />
-            )}
-          </Link>
+            </Link>
+          )}
         </div>
 
         {/* Burger Menu Mobile */}
@@ -79,23 +98,35 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
             </Link>
           ))}
 
-          <Link to="/cart" className="flex items-center gap-2 text-lg">
+          <Link
+            to="/cart"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 text-lg"
+          >
             <ShoppingCart size={20} />
             <span>Cart</span>
           </Link>
 
-          <Link to="/login">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                referrerPolicy="no-referrer"
-                className="w-10 h-10 rounded-full object-cover border border-gray-300"
-              />
-            ) : (
-              <CircleUserRound size={28} />
-            )}
-          </Link>
+          {session ? (
+            <div className="flex flex-col items-center gap-3">
+              {profileImage && (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  referrerPolicy="no-referrer"
+                  className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                />
+              )}
+            </div>
+          ) : (
+            <Link to="/login" onClick={() => setOpen(false)}>
+              {session ? (
+                <LogOut size={28} onClick={handleLogout} />
+              ) : (
+                <CircleUserRound size={28} />
+              )}
+            </Link>
+          )}
         </div>
       )}
     </div>
