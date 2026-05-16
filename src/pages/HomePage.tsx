@@ -1,5 +1,9 @@
-import { Sidebar } from "@/components/ui/sidebar";
+import Hero from "@/components/Hero";
 
 export default function HomePage() {
-  return <div className="w-full h-screen bg-red-700"></div>;
+  return (
+    <div className="w-full h-[600px]">
+      <Hero />
+    </div>
+  );
 }
