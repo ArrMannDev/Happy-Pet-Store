@@ -3,6 +3,7 @@ import PageLayOut from "./pages/PageLayOut";
 import AddToCartPage from "./pages/AddToCartPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import AdminPage from "./admin/pages/AdminPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </Router>
   );

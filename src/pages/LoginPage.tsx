@@ -5,6 +5,8 @@ import { LoginSchema } from "../schemas/auth.schema";
 import { EyeClosed, Eye } from "lucide-react";
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getAccountType } from "@/api/user-api";
+import { supabase } from "@/superbase-client";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -97,7 +99,20 @@ export default function LoginPage() {
         email: "",
         password: "",
       });
-      navigate("/");
+
+      if (result?.success) {
+        const accountType = await getAccountType(
+          result.data.user.id,
+          result.data.user.user_metadata?.account_type
+        );
+        if (accountType === "admin") {
+          navigate("/admin");
+          const { data } = await supabase.auth.getUser()
+          console.log("current user id:", data.user?.id)
+        } else {
+          navigate("/");
+        }
+      }
     }
   };
 
