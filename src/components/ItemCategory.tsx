@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import { getAllCategories } from "@/api/category-api";
-import dogImage from "../assets/img/dog.jpg";
 import { Link } from "react-router-dom";
+import dogImage from "../assets/img/dog.jpg";
+import catImage from "../assets/img/cat.jpg";
+import groomingImage from "../assets/img/grooming.jpg";
+import toysImage from "../assets/img/toys.jpg";
+import accessoriesImage from "../assets/img/accessories.jpg";
+import beddingImage from "../assets/img/bed.jpg";
 
 const categoriesImage = [
   dogImage,
-  dogImage,
-  dogImage,
-  dogImage,
-  dogImage,
-  dogImage,
-  dogImage,
+  catImage,
+  groomingImage,
+  toysImage,
+  accessoriesImage,
+  beddingImage,
 ];
 
 export default function ItemCategory() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     getAllCategories().then((data) => {
       setCategories(data ?? []);
