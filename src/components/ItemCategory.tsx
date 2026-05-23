@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllCategories } from "@/api/category-api";
 import dogImage from "../assets/img/dog.jpg";
+import { Link } from "react-router-dom";
 
 const categoriesImage = [
   dogImage,
@@ -66,58 +67,61 @@ export default function ItemCategory() {
 /* ── Category Card ───────────────────────────────── */
 function CategoryCard({ category, image }: { category: any; image: string }) {
   return (
-    <div
-      className="group relative w-40 h-40 rounded-2xl overflow-hidden cursor-pointer shadow-md"
-      style={{ transition: "transform 0.3s ease, box-shadow 0.3s ease" }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.transform =
-          "translateY(-6px) scale(1.03)";
-        (e.currentTarget as HTMLDivElement).style.boxShadow =
-          "0 20px 40px rgba(12, 56, 27, 0.25)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.transform =
-          "translateY(0) scale(1)";
-        (e.currentTarget as HTMLDivElement).style.boxShadow =
-          "0 4px 12px rgba(0,0,0,0.1)";
-      }}
-    >
-      {/* Background image */}
-      <img
-        src={image}
-        alt={category.category}
-        className="w-full h-full object-cover"
-        style={{ transition: "transform 0.5s ease" }}
-        onMouseEnter={(e) =>
-          ((e.currentTarget as HTMLImageElement).style.transform = "scale(1.1)")
-        }
-        onMouseLeave={(e) =>
-          ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")
-        }
-      />
-
-      {/* Dark gradient overlay */}
+    <Link to={`/category/${category.category}`}>
       <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(12,56,27,0.85) 0%, rgba(12,56,27,0.1) 55%, transparent 100%)",
+        className="group relative w-40 h-40 rounded-2xl overflow-hidden cursor-pointer shadow-md"
+        style={{ transition: "transform 0.3s ease, box-shadow 0.3s ease" }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLDivElement).style.transform =
+            "translateY(-6px) scale(1.03)";
+          (e.currentTarget as HTMLDivElement).style.boxShadow =
+            "0 20px 40px rgba(12, 56, 27, 0.25)";
         }}
-      />
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLDivElement).style.transform =
+            "translateY(0) scale(1)";
+          (e.currentTarget as HTMLDivElement).style.boxShadow =
+            "0 4px 12px rgba(0,0,0,0.1)";
+        }}
+      >
+        {/* Background image */}
+        <img
+          src={image}
+          alt={category.category}
+          className="w-full h-full object-cover"
+          style={{ transition: "transform 0.5s ease" }}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLImageElement).style.transform =
+              "scale(1.1)")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")
+          }
+        />
 
-      {/* Label */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
-        <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">
-          {category.category}
-        </span>
+        {/* Dark gradient overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(12,56,27,0.85) 0%, rgba(12,56,27,0.1) 55%, transparent 100%)",
+          }}
+        />
+
+        {/* Label */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
+          <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">
+            {category.category}
+          </span>
+        </div>
+
+        {/* Hover ring */}
+        <div
+          className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#0c381b]"
+          style={{ transition: "border-color 0.3s ease" }}
+        />
       </div>
-
-      {/* Hover ring */}
-      <div
-        className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#0c381b]"
-        style={{ transition: "border-color 0.3s ease" }}
-      />
-    </div>
+    </Link>
   );
 }
 

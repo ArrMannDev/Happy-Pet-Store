@@ -11,3 +11,4 @@ export const getAllCategories = async () => {
     console.error("Error fetching categories", error);
   }
 };
+

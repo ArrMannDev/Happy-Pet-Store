@@ -5,7 +5,7 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState(undefined);
-  const [userProfiles, setUserProfiles] = useState([]);
+  // const [userProfiles, setUserProfiles] = useState([]);
 
   const signInUser = async (email: string, password: string) => {
     try {
@@ -98,26 +98,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const getAllUserProfiles = async () => {
-    try {
-      const { data, error } = await supabase.from("profiles").select(
-        `id,
-        full_name,
-        phone,
-        address,
-        account_type
-        `,
-      );
+  // const getAllUserProfiles = async () => {
+  //   try {
+  //     const { data, error } = await supabase.from("profiles").select(
+  //       `id,
+  //       full_name,
+  //       phone,
+  //       address,
+  //       account_type
+  //       `,
+  //     );
 
-      if (error) {
-        throw error;
-      }
-      setUserProfiles(data);
-      console.log("Users Data", userProfiles);
-    } catch (error) {
-      console.error("Error Getting fetching the user profiles", error.message);
-    }
-  };
+  //     if (error) {
+  //       throw error;
+  //     }
+  //     setUserProfiles(data);
+  //     console.log("Users Data", userProfiles);
+  //   } catch (error) {
+  //     console.error("Error Getting fetching the user profiles", error.message);
+  //   }
+  // };
 
   useEffect(() => {
     getInitialSession();
@@ -128,10 +128,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!session) return;
-    getAllUserProfiles();
-  }, [session]);
+  // useEffect(() => {
+  //   if (!session) return;
+  //   getAllUserProfiles();
+  // }, [session]);
 
   return (
     <AuthContext.Provider
@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         session,
         signInUser,
         signUpUser,
-        userProfiles,
+        // userProfiles,
         signInWithGoogle,
       }}
     >
