@@ -4,7 +4,6 @@ import type { Category } from "@/type/category.type"
 
 export const getAllCategories = async (): Promise<Category[]> => {
   const { data, error } = await supabase.from("categories").select("*").order("created_at", { ascending: true })
-
   if (error) {
     console.error("Error fetching categories", error)
     return []
