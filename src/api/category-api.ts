@@ -29,7 +29,7 @@ export const createCategory = async (
 }
 
 export const updateCategory = async (
-  id: string,
+  id: number,
   category: string
 ): Promise<ApiResult<Category>> => {
   const { data, error } = await supabase
@@ -46,7 +46,7 @@ export const updateCategory = async (
   return { success: true, data: data as Category }
 }
 
-export const deleteCategory = async (id: string): Promise<ApiResult<null>> => {
+export const deleteCategory = async (id: number): Promise<ApiResult<null>> => {
   const { error } = await supabase.from("categories").delete().eq("id", id)
 
   if (error) {

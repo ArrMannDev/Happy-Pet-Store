@@ -84,3 +84,47 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Items: public read; admins manage
+alter table public.items enable row level security;
+
+drop policy if exists "items_public_read" on public.items;
+create policy "items_public_read"
+  on public.items for select
+  using (true);
+
+drop policy if exists "items_admin_insert" on public.items;
+create policy "items_admin_insert"
+  on public.items for insert
+  with check (public.is_admin());
+
+drop policy if exists "items_admin_update" on public.items;
+create policy "items_admin_update"
+  on public.items for update
+  using (public.is_admin());
+
+drop policy if exists "items_admin_delete" on public.items;
+create policy "items_admin_delete"
+  on public.items for delete
+  using (public.is_admin());
+
+-- Storage bucket item-images: public read; admins upload/update/delete
+drop policy if exists "item_images_public_read" on storage.objects;
+create policy "item_images_public_read"
+  on storage.objects for select
+  using (bucket_id = 'item-images');
+
+drop policy if exists "item_images_admin_insert" on storage.objects;
+create policy "item_images_admin_insert"
+  on storage.objects for insert
+  with check (bucket_id = 'item-images' and public.is_admin());
+
+drop policy if exists "item_images_admin_update" on storage.objects;
+create policy "item_images_admin_update"
+  on storage.objects for update
+  using (bucket_id = 'item-images' and public.is_admin());
+
+drop policy if exists "item_images_admin_delete" on storage.objects;
+create policy "item_images_admin_delete"
+  on storage.objects for delete
+  using (bucket_id = 'item-images' and public.is_admin());

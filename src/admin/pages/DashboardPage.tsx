@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { FolderTree, Package, ShoppingBag, Users } from "lucide-react"
 import { getAllCategories } from "@/api/category-api"
+import { getAllItems } from "@/api/item-api"
 import DashboardStatCard from "@/admin/components/DashboardStatCard"
 import {
   Card,
@@ -15,11 +16,15 @@ import type { Category } from "@/type/category.type"
 
 export default function DashboardPage() {
   const [categories, setCategories] = useState<Category[]>([])
+  const [productCount, setProductCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAllCategories()
-      .then((data) => setCategories(data))
+    Promise.all([getAllCategories(), getAllItems()])
+      .then(([cats, items]) => {
+        setCategories(cats)
+        setProductCount(items.length)
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -32,8 +37,8 @@ export default function DashboardPage() {
     },
     {
       title: "Products",
-      value: "—",
-      description: "Coming soon",
+      value: loading ? "—" : productCount,
+      description: "Items in your catalog",
       icon: Package,
     },
     {

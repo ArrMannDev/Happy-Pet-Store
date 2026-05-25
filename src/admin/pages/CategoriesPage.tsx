@@ -95,9 +95,6 @@ export default function CategoriesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
-          <p className="text-muted-foreground">
-            Create, edit, and delete categories on the home page.
-          </p>
         </div>
         <Button onClick={openCreate}>
           <Plus />

@@ -59,7 +59,7 @@ export default function AdminSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-3">
               {adminNavItems.map((item) => {
                 const isActive =
                   item.url === "/admin"
