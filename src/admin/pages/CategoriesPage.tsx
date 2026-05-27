@@ -8,6 +8,10 @@ import {
 } from "@/api/category-api"
 import CategoryFormSheet from "@/admin/components/CategoryFormSheet"
 import ConfirmDialog from "@/admin/components/ConfirmDialog"
+import {
+  TablePagination,
+  TableSearchBar,
+} from "@/admin/components/TableControls"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,8 +21,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { usePaginatedSearch } from "@/hooks/use-paginated-search"
 import type { CategoryFormValues } from "@/schemas/category.schema"
 import type { Category } from "@/type/category.type"
+
+const filterCategory = (category: Category, query: string) =>
+  category.category.toLowerCase().includes(query)
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -27,6 +35,19 @@ export default function CategoriesPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  const {
+    search,
+    setSearch,
+    page,
+    setPage,
+    totalPages,
+    paginated,
+    filteredCount,
+    totalCount,
+    rangeStart,
+    rangeEnd,
+  } = usePaginatedSearch(categories, filterCategory)
 
   const loadCategories = useCallback(async () => {
     setLoading(true)
@@ -90,11 +111,17 @@ export default function CategoriesPage() {
     setFormOpen(true)
   }
 
+  const showEmptyState = !loading && totalCount === 0
+  const showNoResults = !loading && totalCount > 0 && filteredCount === 0
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
+          <p className="text-muted-foreground">
+            Manage categories displayed on the home page.
+          </p>
         </div>
         <Button onClick={openCreate}>
           <Plus />
@@ -103,22 +130,33 @@ export default function CategoriesPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>All categories</CardTitle>
-          <CardDescription>
-            {loading
-              ? "Loading..."
-              : `${categories.length} categor${categories.length === 1 ? "y" : "ies"} in your store`}
-          </CardDescription>
+        <CardHeader className="gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <CardTitle>All categories</CardTitle>
+              <CardDescription>
+                {loading
+                  ? "Loading..."
+                  : `${totalCount} categor${totalCount === 1 ? "y" : "ies"} in your store`}
+              </CardDescription>
+            </div>
+            {!loading && totalCount > 0 && (
+              <TableSearchBar
+                value={search}
+                onChange={setSearch}
+                placeholder="Search categories..."
+              />
+            )}
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton key={i} className="h-12 w-full" />
               ))}
             </div>
-          ) : categories.length === 0 ? (
+          ) : showEmptyState ? (
             <div className="flex flex-col items-center gap-4 py-8 text-center">
               <p className="text-sm text-muted-foreground">
                 No categories yet. Add your first category to get started.
@@ -128,53 +166,71 @@ export default function CategoriesPage() {
                 Add category
               </Button>
             </div>
-          ) : (
-            <div className="overflow-x-auto rounded-lg border">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50">
-                  <tr className="border-b text-left">
-                    <th className="px-4 py-3 font-medium">Name</th>
-                    <th className="px-4 py-3 font-medium">Created</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map((category) => (
-                    <tr key={category.id} className="border-b last:border-0">
-                      <td className="px-4 py-3 font-medium capitalize">
-                        {category.category}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {category.created_at
-                          ? new Date(category.created_at).toLocaleDateString()
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => openEdit(category)}
-                            aria-label={`Edit ${category.category}`}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="text-destructive hover:text-destructive"
-                            onClick={() => setDeleteTarget(category)}
-                            aria-label={`Delete ${category.category}`}
-                          >
-                            <Trash2 />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          ) : showNoResults ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No categories match &quot;{search}&quot;.
             </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto rounded-lg border">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr className="border-b text-left">
+                      <th className="px-4 py-3 font-medium">Name</th>
+                      <th className="px-4 py-3 font-medium">Created</th>
+                      <th className="px-4 py-3 font-medium text-right">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginated.map((category) => (
+                      <tr key={category.id} className="border-b last:border-0">
+                        <td className="px-4 py-3 font-medium capitalize">
+                          {category.category}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {category.created_at
+                            ? new Date(category.created_at).toLocaleDateString()
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() => openEdit(category)}
+                              aria-label={`Edit ${category.category}`}
+                            >
+                              <Pencil />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-destructive hover:text-destructive"
+                              onClick={() => setDeleteTarget(category)}
+                              aria-label={`Delete ${category.category}`}
+                            >
+                              <Trash2 />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <TablePagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+                rangeStart={rangeStart}
+                rangeEnd={rangeEnd}
+                filteredCount={filteredCount}
+                totalCount={totalCount}
+              />
+            </>
           )}
         </CardContent>
       </Card>

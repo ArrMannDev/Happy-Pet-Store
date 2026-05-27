@@ -128,7 +128,7 @@ export const createItem = async (
 }
 
 export const updateItem = async (
-  id: string,
+  id: number,
   input: ItemUpdateInput,
   imageFile?: File | null,
   currentImageUrl?: string

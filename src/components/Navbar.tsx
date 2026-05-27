@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   LogOut,
+  LayoutDashboard,
 } from "lucide-react";
 import { useAuth } from "../Context/AuthContext";
 import { supabase } from "../superbase-client";
@@ -19,6 +20,7 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
   const profileImage =
     session?.user?.user_metadata?.avatar_url ||
     session?.user?.user_metadata?.picture;
+  const isAdmin = session?.user?.user_metadata?.account_type === "admin";
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -57,6 +59,16 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
               1
             </p>
           </Link>
+
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm hover:bg-gray-50"
+            >
+              <LayoutDashboard size={18} />
+              <span>Dashboard</span>
+            </Link>
+          )}
 
           {session ? (
             <div className="flex items-center gap-3">
@@ -109,6 +121,17 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
 
           {session ? (
             <div className="flex flex-col items-center gap-3">
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 text-lg hover:text-[#7CA982]"
+                >
+                  <LayoutDashboard size={20} />
+                  <span>Dashboard</span>
+                </Link>
+              )}
+
               {profileImage && (
                 <img
                   src={profileImage}
@@ -117,6 +140,13 @@ export default function Navbar({ navLinks }: { navLinks: NavItem[] }) {
                   className="w-12 h-12 rounded-full object-cover border border-gray-300"
                 />
               )}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-lg hover:text-[#7CA982]"
+              >
+                <LogOut size={20} />
+                <span>Logout</span>
+              </button>
             </div>
           ) : (
             <Link to="/login" onClick={() => setOpen(false)}>
