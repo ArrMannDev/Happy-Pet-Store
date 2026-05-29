@@ -1,21 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllCategories } from "@/api/category-api";
 import { Link } from "react-router-dom";
-import dogImage from "../assets/img/dog.jpg";
-import catImage from "../assets/img/cat.jpg";
-import groomingImage from "../assets/img/grooming.jpg";
-import toysImage from "../assets/img/toys.jpg";
-import accessoriesImage from "../assets/img/accessories.jpg";
-import beddingImage from "../assets/img/bed.jpg";
-
-const categoriesImage = [
-  dogImage,
-  catImage,
-  groomingImage,
-  toysImage,
-  accessoriesImage,
-  beddingImage,
-];
+import { categoryImages } from "@/lib/category-images";
 
 export default function ItemCategory() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -60,7 +46,7 @@ export default function ItemCategory() {
               <CategoryCard
                 key={category.id}
                 category={category}
-                image={categoriesImage[index % categoriesImage.length]}
+                image={categoryImages[index % categoryImages.length]}
               />
             ))}
       </div>
@@ -71,7 +57,7 @@ export default function ItemCategory() {
 /* ── Category Card ───────────────────────────────── */
 function CategoryCard({ category, image }: { category: any; image: string }) {
   return (
-    <Link to={`/category/${category.category}`}>
+    <Link to={`/categories/${category.id}`}>
       <div
         className="group relative w-40 h-40 rounded-2xl overflow-hidden cursor-pointer shadow-md"
         style={{ transition: "transform 0.3s ease, box-shadow 0.3s ease" }}

@@ -78,6 +78,23 @@ export const getAllItems = async (): Promise<Item[]> => {
   return (data as Item[]) ?? []
 }
 
+export const getItemsByCategoryId = async (
+  categoryId: number
+): Promise<Item[]> => {
+  const { data, error } = await supabase
+    .from("items")
+    .select("*")
+    .eq("category_id", categoryId)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    console.error("Error fetching items by category", error)
+    return []
+  }
+
+  return (data as Item[]) ?? []
+}
+
 export const getItemsWithCategory = async () => {
   const [items, categories] = await Promise.all([
     getAllItems(),
