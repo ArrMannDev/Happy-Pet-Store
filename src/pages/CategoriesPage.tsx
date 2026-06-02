@@ -80,7 +80,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-[#f4f7f4]">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
+      <div className="mx-auto max-w-7xl px-2 py-8 md:px-6 md:py-10">
         <div className="mb-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#0c381b]">
             Shop

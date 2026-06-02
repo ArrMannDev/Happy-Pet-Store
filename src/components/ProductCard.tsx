@@ -1,10 +1,10 @@
-import { ShoppingCart } from "lucide-react"
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import type { Item } from "@/type/item.type"
+import { ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import type { Item } from "@/type/item.type";
 
 export default function ProductCard({ item }: { item: Item }) {
-  const outOfStock = item.stock <= 0
+  const outOfStock = item.stock <= 0;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md">
@@ -23,7 +23,9 @@ export default function ProductCard({ item }: { item: Item }) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex-1">
-          <h3 className="line-clamp-2 font-semibold text-gray-900">{item.name}</h3>
+          <h3 className="line-clamp-2 font-semibold text-gray-900">
+            {item.name}
+          </h3>
           <p className="mt-1 text-lg font-bold text-[#0c381b]">
             {Number(item.price).toLocaleString()} MMK
           </p>
@@ -34,16 +36,17 @@ export default function ProductCard({ item }: { item: Item }) {
           )}
         </div>
 
+        <Link to="/cart">
         <Button
           variant="outline"
           className="w-full border-[#0c381b] text-[#0c381b] hover:bg-[#0c381b] hover:text-white"
           disabled={outOfStock}
-          render={<Link to="/cart" />}
         >
           <ShoppingCart />
           {outOfStock ? "Unavailable" : "Add to cart"}
         </Button>
+        </Link>
       </div>
     </article>
-  )
+  );
 }
