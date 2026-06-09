@@ -1,4 +1,6 @@
 import { supabase } from "@/superbase-client";
+import type { CartProduct } from "@/type/cart.type";
+import { success } from "zod";
 
 export const addToCart = async (itemId: number) => {
   const { data: userData, error: userError } = await supabase.auth.getUser();
@@ -59,7 +61,8 @@ export const getMyCart = async (userId: string) => {
         stock
       )
     `)
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("id", { ascending: true });
 
   if (error) {
     console.error("Cart fetch error:", error.message);
@@ -68,3 +71,53 @@ export const getMyCart = async (userId: string) => {
 
   return data;
 };
+
+
+export const increaseCartItemQuantity = async (cartItem: CartProduct) => {
+  if (cartItem.quantity >= cartItem.items.stock) {
+    return { success: false, message: "Cannot exceed available stock" };
+  }
+
+  const { error } = await supabase
+    .from("cart_items")
+    .update({ quantity: cartItem.quantity + 1 })
+    .eq("id", cartItem.id);
+    
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  return { success: true };
+};
+
+export const decreaseCartItemQuantity = async (cartItem: CartProduct) => {
+  if (cartItem.quantity == 1) {
+    return { success: false, message: "Cannot decrease the quantity" };
+  }
+
+  const { error } = await supabase
+    .from("cart_items")
+    .update({ quantity: cartItem.quantity - 1 })
+    .eq("id", cartItem.id);
+    
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  return { success: true };
+};
+
+export const removeCart = async (cartId:string)=>{
+  const {error} = await supabase
+  .from("cart_items")
+  .delete()
+  .eq("id",cartId)
+
+  if(error){
+    return {success:false,message:error.message}
+  }
+
+  return {success:true}
+}

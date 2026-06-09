@@ -12,3 +12,4 @@ type Product = {
   stock: number;
 };
 
+
