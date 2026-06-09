@@ -1,6 +1,5 @@
 import { supabase } from "@/superbase-client";
 import type { CartProduct } from "@/type/cart.type";
-import { success } from "zod";
 
 export const addToCart = async (itemId: number) => {
   const { data: userData, error: userError } = await supabase.auth.getUser();
